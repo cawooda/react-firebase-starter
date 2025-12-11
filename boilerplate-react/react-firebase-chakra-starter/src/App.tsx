@@ -1,7 +1,8 @@
 import { Routes, Route, Outlet } from "react-router-dom";
 import "./App.css";
-import { Container, Flex } from "@chakra-ui/react";
+import { Box, Container, Flex } from "@chakra-ui/react";
 import LoginForm from "./components/LoginForm";
+import SignupForm from "./components/SignupForm";
 import { AuthProvider } from "@/context/AuthContext";
 
 import { ColorModeButton } from "@/components/ui/color-mode";
@@ -15,7 +16,7 @@ function App() {
             <ColorModeButton />
             <Routes>
               <Route path="/" element={<LoginForm />} />
-              {/* <Route path="/signup" element={<Signup />} /> */}
+              <Route path="/signup" element={<SignupForm />} />
             </Routes>
             <Outlet />
           </Flex>

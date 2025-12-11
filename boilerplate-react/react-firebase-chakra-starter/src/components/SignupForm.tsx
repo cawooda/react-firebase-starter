@@ -11,10 +11,10 @@ import {
 import { useState } from "react";
 import Logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
-import { login, signup, logout, getCurrentUser } from "../auth/Auth";
+import { login, signup } from "../auth/Auth";
 
 // Define types for form fields and data
-type LoginFormFields = {
+export type SignupFormFields = {
   [key: string]: {
     label: string;
     type: string;
@@ -23,14 +23,28 @@ type LoginFormFields = {
   };
 };
 
-type LoginFormData = {
+type SignupFormData = {
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   onSubmit?: () => void;
 };
 
 // Configuration for the login form fields
-const formFieldsConfig: LoginFormFields = {
+const formFieldsConfig: SignupFormFields = {
+  firstName: {
+    label: "First Name",
+    type: "text",
+    placeholder: "Your first name",
+    required: true,
+  },
+  lastName: {
+    label: "Last Name",
+    type: "text",
+    placeholder: "Your last name",
+    required: true,
+  },
   email: {
     label: "Email",
     type: "email",
@@ -44,12 +58,14 @@ const formFieldsConfig: LoginFormFields = {
     required: true,
   },
   submit: {
-    label: "Login",
+    label: "Sign Up",
     type: "submit",
   },
 };
 
-const loginFormData: LoginFormData = {
+const signupFormData: SignupFormData = {
+  firstName: "",
+  lastName: "",
   email: "",
   password: "",
 };
@@ -61,23 +77,23 @@ const loginFormData: LoginFormData = {
 // this is just the form structure
 // A user type should be imported from the firebase auth module
 
-function googleSignin() {
+function googleSignUp() {
   console.log("Google Sign-In clicked");
 }
 
-function LoginForm() {
-  const [fields, setFields] = useState(loginFormData);
+function SignupForm() {
+  const [fields, setFields] = useState(signupFormData);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFields({
       ...fields,
-      [name as keyof LoginFormData]: value,
+      [name as keyof SignupFormData]: value,
     });
   };
 
   const handleFormSubmit = (event: any) => {
     event.preventDefault();
-    login(fields.email, fields.password);
+    signup(fields.email, fields.password);
     console.log("Form submitted with data:", fields);
   };
 
@@ -90,8 +106,8 @@ function LoginForm() {
       width="100vw"
     >
       <Image src={Logo} alt="Logo" width="10vw" pb={3} />
-      <Heading mb={6}>Login</Heading>
-      <form key="login-form" onSubmit={handleFormSubmit}>
+      <Heading mb={6}>Sign Up</Heading>
+      <form key="signup-form" onSubmit={handleFormSubmit}>
         {Object.entries(formFieldsConfig).map(([name, config]) => {
           console.log(name, config);
           if (name !== "submit") {
@@ -125,11 +141,7 @@ function LoginForm() {
                   </Link>
                 </Text>
                 <Link to="/auth/google">
-                  <Button
-                    type="button"
-                    onSubmit={googleSignin}
-                    variant="outline"
-                  >
+                  <Button type="button" variant="outline">
                     Sign in with Google
                   </Button>
                 </Link>
@@ -142,4 +154,4 @@ function LoginForm() {
   );
 }
 
-export default LoginForm;
+export default SignupForm;

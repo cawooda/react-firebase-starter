@@ -39,3 +39,11 @@ export const logout = async (): Promise<void> => {
 export const getCurrentUser = (): User | null => {
   return auth.currentUser;
 };
+
+export const signInWithGoogle = async () => {
+  // Google sign-in logic to be implemented
+};
+
+export const signUpWithGoogle = async () => {
+  // Google sign-up logic to be implemented
+};
