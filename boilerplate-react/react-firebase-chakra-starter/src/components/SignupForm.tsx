@@ -5,23 +5,16 @@ import {
   Heading,
   Image,
   Flex,
-  Container,
   Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import Logo from "../assets/logo.png";
+
+import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+
 import { Link } from "react-router-dom";
-import { login, signup } from "../auth/Auth";
 
 // Define types for form fields and data
-export type SignupFormFields = {
-  [key: string]: {
-    label: string;
-    type: string;
-    placeholder?: string;
-    required?: boolean;
-  };
-};
 
 type SignupFormData = {
   firstName: string;
@@ -71,18 +64,14 @@ const signupFormData: SignupFormData = {
 };
 
 // LoginForm component
-// Renders a login form with email and password fields
-// the form is able to use and communicate with an AuthContext to set the user state upon successful login
-// however the actual login logic is not implemented here
-// this is just the form structure
-// A user type should be imported from the firebase auth module
-
-function googleSignUp() {
-  console.log("Google Sign-In clicked");
-}
 
 function SignupForm() {
+  const { signUp } = useAuth();
   const [fields, setFields] = useState(signupFormData);
+  const [signUpError, setSignUpError] = useState("");
+  function googleSignUp() {
+    alert("Google Sign Up not implemented yet");
+  }
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFields({
@@ -91,10 +80,15 @@ function SignupForm() {
     });
   };
 
-  const handleFormSubmit = (event: any) => {
+  const handleFormSubmit = async (event: any) => {
     event.preventDefault();
-    signup(fields.email, fields.password);
-    console.log("Form submitted with data:", fields);
+    const signUpResult = await signUp(fields.email, fields.password);
+    if (signUpResult && "error" in signUpResult && signUpResult.error) {
+      console.log("Sorry:", signUpResult.error);
+      setSignUpError(signUpResult.error);
+    } else {
+      setSignUpError("");
+    }
   };
 
   return (
@@ -127,25 +121,32 @@ function SignupForm() {
             );
           } else {
             return (
-              <Container>
+              <Flex key="form-actions" direction="column" align="center">
+                <Text color="red.500" mb={2} fontSize="5sm">
+                  {signUpError}
+                </Text>
                 <Button type="submit" variant="outline">
                   {config.label}
                 </Button>
                 <Text mt={4} fontSize="sm">
-                  Don't have an account?
+                  Have an account?
                   <Link
-                    to="/signup"
+                    to="/login"
                     style={{ color: "blue.500", textDecoration: "underline" }}
                   >
-                    Sign Up
+                    Login
                   </Link>
                 </Text>
-                <Link to="/auth/google">
-                  <Button type="button" variant="outline">
-                    Sign in with Google
-                  </Button>
-                </Link>
-              </Container>
+
+                <Button
+                  onClick={googleSignUp}
+                  style={{ textDecoration: "none" }}
+                  type="button"
+                  variant="outline"
+                >
+                  Sign in with Google
+                </Button>
+              </Flex>
             );
           }
         })}
