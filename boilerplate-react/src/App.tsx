@@ -27,7 +27,7 @@ function App() {
             </Flex>
 
             <Routes>
-              <Route path="/home" element={<Home />} />
+              <Route path="/" element={<Home />} />
             </Routes>
             <Outlet />
           </Flex>

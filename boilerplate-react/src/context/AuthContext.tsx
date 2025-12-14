@@ -22,6 +22,7 @@ type AuthContextType = {
     email: string,
     password: string
   ) => Promise<User | { error: string } | null>;
+  getUserClaims: () => Promise<Record<string, any> | null>;
   signIn: (
     email: string,
     password: string
@@ -102,6 +103,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         password
       );
       setLoading(false);
+      console.log("user.getIdToken", await userCredential.user.getIdToken());
       return userCredential.user;
     } catch (err: any) {
       handleError(err); // err has `.code` in Firebase
@@ -113,6 +115,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(true);
     await signOut(auth);
     setLoading(false);
+  }
+  async function getUserClaims() {
+    const token = auth.currentUser?.getIdTokenResult() || null;
+    const claims = token ? (await token).claims : null;
+    return claims;
   }
 
   useEffect(() => {
@@ -127,7 +134,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const clearError = () => setError(null);
   return (
     <AuthContext.Provider
-      value={{ user, loading, signUp, signIn, error, clearError, signOutUser }}
+      value={{
+        user,
+        loading,
+        signUp,
+        signIn,
+        getUserClaims,
+        error,
+        clearError,
+        signOutUser,
+      }}
     >
       {children}
     </AuthContext.Provider>
